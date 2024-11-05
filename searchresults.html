@@ -1,0 +1,99 @@
+<!DOCTYPE html> 
+<html>
+    <head>
+        <title>Registrar's Office Class Search</title>
+    </head>
+    <body>
+        <h1>Registrar's Office</h1>
+        <h2>Class Search</h2>
+        <hr>
+        <form action="/classoverviews" method="get">
+            <table>
+                <tbody>
+                    <tr>
+                        <td align="right">Dept:</td>
+                        <td><input type="text" id="deptInput" name="dept" value="{{prev_query.dept}}" autofocus></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Number:</td>
+                        <td><input type="text" id="coursenumInput" name="coursenum" value="{{prev_query.coursenum}}" autofocus></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Area:</td>
+                        <td><input type="text" id="areaInput" name="area" value="{{prev_query.area}}" autofocus></td>
+                    </tr>
+                    <tr>
+                        <td align="right">Title:</td>
+                        <td><input type="text" id="titleInput" name="title" value="{{prev_query.title}}" autofocus></td>
+                    </tr>
+                    <tr>
+                        <td> </td>
+                        <td><input type="submit" id="submitButton" value="Go"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+        <hr>
+        <div id="resultsDiv"></div>
+    
+          <br>
+          <hr>
+          <a>Created by Kayla Xu and Niranjan Vijaya Krishnan</a>
+          <hr>
+        
+        <script src=
+          "https://cdn.jsdelivr.net/npm/mustache@4.2.0/mustache.min.js">
+        </script>
+
+        <script src=         
+            "https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js">
+        </script> 
+
+        <script>
+            'use strict';
+
+            function handleResponse(table) {
+                let html = convertToHtml(table);
+                $(’#resultsDiv’).html(html);
+            }
+            function handleError(request) {
+                if (request.statusText !== 'abort') 
+                    alert('Error: Failed to fetch data from server');
+            }
+            let request = null;
+
+            function getResults() {
+                let dept = $('#deptInput').val()
+                let coursenum = $('#coursenumInput').val()
+                let area = $('#areaInput').val()
+                let title = $('#titleInput').val()
+
+                let url = '/regoverviews?dept={{dept}}&coursenum={{coursenum}}&area={{area}}&title={{title}}'
+                if (request !== null)
+                    request.abort();
+                let requestData = {
+                    type: 'GET',
+                    url: url, 
+                    success: handleResponse,
+                    error: handleError
+                };
+
+                request = $.ajax(requestData);
+            }
+            let timer = null; 
+
+            function debouncedSetField(field, id) {
+                clearTimeout(timer)
+                timer = window.setTimeout(getResults, 500);
+            }
+
+            function setup() {
+                $('#deptInput').on(’input’, debouncedGetResults);
+                $('#coursenumInput').on(’input’, debouncedGetResults);
+                $('#areaInput').on(’input’, debouncedGetResults);
+                $('#titleInput').on(’input’, debouncedGetResults);
+            }
+            $('document').ready(setup);
+        </script>
+    </body>
+</html>
