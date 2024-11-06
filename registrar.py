@@ -5,29 +5,9 @@ import json
 
 app = Flask(__name__, template_folder='.')
 
-def get_prior_request():
-    prev_dept = flask.request.cookies.get('prev_dept')
-    prev_dept = '' if prev_dept is None else prev_dept
-
-    prev_num = flask.request.cookies.get('prev_num')
-    prev_num = '' if prev_num is None else prev_num
-
-    prev_area = flask.request.cookies.get('prev_area')
-    prev_area  = '' if prev_area is None else prev_area
-
-    prev_title = flask.request.cookies.get('prev_title')
-    if prev_title is None:
-        prev_title = ''
-
-    prev_query = {'coursenum':prev_num, 'dept':prev_dept,
-             'area':prev_area,'title':prev_title} 
-    return prev_query
-
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    #prev_query = get_prior_request()
-    # HOW TO SET COOKIES?
     return flask.send_file('searchresults.html')
 
 @app.route('/?', methods=['GET'])
@@ -93,9 +73,6 @@ def reg_details():
         return render_template(
             'errordetails.html',
             error="non-integer classid")
-
-    # get last search data for the go back button
-    prev_query = get_prior_request()
 
     class_details = database.get_class_details(classid)
 
