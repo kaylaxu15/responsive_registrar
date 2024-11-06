@@ -34,12 +34,6 @@ def regoverviews():
     response = flask.make_response(json_doc)  
     response.headers['Content-Type'] = 'application/json'
 
-    # set cookies here? 
-    response.set_cookie('prev_dept', dept)
-    response.set_cookie('prev_num', num)
-    response.set_cookie('prev_area', area)
-    response.set_cookie('prev_title', title)
-
     return response
 
     '''
