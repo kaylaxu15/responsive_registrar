@@ -1,6 +1,7 @@
 import flask
 from flask import Flask, render_template
 import database
+import json
 
 app = Flask(__name__, template_folder='.')
 
@@ -23,9 +24,15 @@ def get_prior_request():
     return prev_query
 
 @app.route('/', methods=['GET'])
-@app.route('/?', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
+    #prev_query = get_prior_request()
+    # HOW TO SET COOKIES?
+    return flask.send_file('searchresults.html')
+
+@app.route('/?', methods=['GET'])
+@app.route('/regoverviews', methods=['GET'])
+def regoverviews():
     dept = flask.request.args.get('dept')
     if dept is None:
         dept = ''
@@ -43,20 +50,32 @@ def index():
              'area':area,'title':title}                         
     courses = database.get_class_overviews(query)
 
-    
+    json_doc = json.dumps(courses)
+    response = flask.make_response(json_doc)  
+    response.headers['Content-Type'] = 'application/json'
+
+    # set cookies here? 
+    response.set_cookie('prev_dept', dept)
+    response.set_cookie('prev_num', num)
+    response.set_cookie('prev_area', area)
+    response.set_cookie('prev_title', title)
+
+    return response
+
+    '''
     # get the last search's data
     prev_query = get_prior_request()
     if courses is None:
         return render_template(
             'errordetails.html',
-            error='''A server error occurred.
-             Please contact the system administrator.''')
+            error='A server error occurred. Please contact the system administrator.')
     if courses[0] is False:
         return render_template('errordetails.html', error=courses[1])
     return render_template(
         'searchresults.html',
         courses=courses,
         prev_query=prev_query)
+        '''
 
 # display the class details when you click on class ID
 @app.route('/regdetails', methods=['GET'])
@@ -102,6 +121,7 @@ def reg_details():
             class_details=class_details,
             prev_query=prev_query)
 
+'''
 
 @app.route('/classoverviews', methods=['GET'])
 def class_overviews():
@@ -131,3 +151,4 @@ def class_overviews():
     response.set_cookie('prev_area', area)
     response.set_cookie('prev_title', title)
     return response
+'''
