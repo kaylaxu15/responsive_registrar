@@ -12,19 +12,19 @@
                 <tbody>
                     <tr>
                         <td align="right">Dept:</td>
-                        <td><input type="text" id="deptInput" name="dept" value="{{prev_query.dept}}" autofocus></td>
+                        <td><input type="text" id="deptInput" autofocus></td>
                     </tr>
                     <tr>
                         <td align="right">Number:</td>
-                        <td><input type="text" id="coursenumInput" name="coursenum" value="{{prev_query.coursenum}}" autofocus></td>
+                        <td><input type="text" id="coursenumInput" autofocus></td>
                     </tr>
                     <tr>
                         <td align="right">Area:</td>
-                        <td><input type="text" id="areaInput" name="area" value="{{prev_query.area}}" autofocus></td>
+                        <td><input type="text" id="areaInput" autofocus></td>
                     </tr>
                     <tr>
                         <td align="right">Title:</td>
-                        <td><input type="text" id="titleInput" name="title" value="{{prev_query.title}}" autofocus></td>
+                        <td><input type="text" id="titleInput" autofocus></td>
                     </tr>
                 </tbody>
             </table>
@@ -77,19 +77,22 @@
                     $('#resultsDiv').html(html);
                 }
             }
-            
+
             function handleError(request) {
-                alert('Error: Failed to fetch data from server');
+                if (request.statusText !== 'abort')
+                    alert('Error: Failed to fetch data from server');
             }
             let request = null;
 
             function getResults() {
-                let dept = $('#deptInput').val();
-                let coursenum = $('#coursenumInput').val();
-                let area = $('#areaInput').val();
-                let title = $('#titleInput').val();
+                let dept = $('#deptInput').val() || '';
+                let coursenum = $('#coursenumInput').val() || '';
+                let area = $('#areaInput').val() || '';
+                let title = $('#titleInput').val() || '';
 
-                let url = '/regoverviews?dept={{dept}}&coursenum={{coursenum}}&area={{area}}&title={{title}}'
+                let url = '/regoverviews?dept=' + dept + '&coursenum='
+                + coursenum + '&area=' + area + '&title=' + title
+                
                 if (request !== null)
                     request.abort();
                 let requestData = {
@@ -103,7 +106,7 @@
             }
             let timer = null; 
 
-            function debouncedSetField(field, id) {
+            function debouncedGetResults() {
                 clearTimeout(timer);
                 timer = window.setTimeout(getResults, 500);
             }
