@@ -49,9 +49,10 @@
             'use strict';
 
             function convertToHtml(courses) {
-                let template = '
+                
+                let template = `
+                <table>
                 {{#courses}}
-                <table id="overviewsTable" border="1">
                 <tr>
                     <a href="/regdetails?classid={{classid}}">{{classid}}</a> 
                     <td>{{dept}}</td>
@@ -59,22 +60,26 @@
                     <td>{{area}}</td>
                     <td>{{title}}</td>
                 </tr>
-                {{/courses}}'
+                {{/courses}}
+                </table>`;
 
                 let map = {courses: courses};
                 let html = Mustache.render(template, map);
                 return html;
-                </table>
-
             }
 
             function handleResponse(courses) {
-                let html = convertToHtml(courses);
-                $('#resultsDiv').html(html);
+                if (!courses[0]) {
+                    alert(courses[1])  // handle missing classid
+                }
+                else {
+                    let html = convertToHtml(courses[1]); // parse through class info
+                    $('#resultsDiv').html(html);
+                }
             }
+            
             function handleError(request) {
-                if (request.statusText !== 'abort') 
-                    alert('Error: Failed to fetch data from server');
+                alert('Error: Failed to fetch data from server');
             }
             let request = null;
 
