@@ -55,6 +55,7 @@ def regoverviews():
 @app.route('/regdetails', methods=['GET'])
 def reg_details():
     classid = flask.request.args.get('classid')
+    print("CLASSID HERE", classid)
 
     if classid == "":
         return render_template(
@@ -69,13 +70,18 @@ def reg_details():
             error="non-integer classid")
 
     class_details = database.get_class_details(classid)
+    json_doc = json.dumps(class_details)
+    response = flask.make_response(json_doc)  
+    response.headers['Content-Type'] = 'application/json'
 
+    return response
+    '''
     try:
         if class_details is None:
             return render_template(
                 'errordetails.html',
-                error='''A server error occurred.
-                 Please contact the system administrator.''')
+                error='A server error occurred.
+                 Please contact the system administrator.')
         if class_details[0] is False:
             return render_template(
                 'errordetails.html',
@@ -83,14 +89,13 @@ def reg_details():
         return render_template(
             'classdetails.html',
             classid=classid,
-            class_details=class_details,
-            prev_query=prev_query)
+            class_details=class_details)
     except KeyError:
         return render_template(
             'classdetails.html',
             classid=classid,
-            class_details=class_details,
-            prev_query=prev_query)
+            class_details=class_details)
+    '''
 
 '''
 
