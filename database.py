@@ -50,7 +50,7 @@ def search_database(cursor, query):
                         'area':area,
                         'title':title})
 
-    return courses
+    return [True, courses]
 
 #-------------------------------------------------------------#
 # COURSE DETAILS
@@ -125,7 +125,7 @@ def class_details(cursor, classid):
                     'prereqs': first_row[11], 'profnames': profs
                     }
 
-    return courses_dict
+    return [True, courses_dict]
 
 #-------------------------------------------------------------#
 

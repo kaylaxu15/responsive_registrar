@@ -55,25 +55,23 @@
                 <table>
                     <thead>
                         <tr>
-                        <th>Class ID</th>
-                        <th>Dept</th>
-                        <th>Course Number</th>
-                        <th>Area</th>
-                        <th>Title</th>
-                    
+                            <th>Class ID</th>
+                            <th>Dept</th>
+                            <th>Course Number</th>
+                            <th>Area</th>
+                            <th>Title</th>
+                        </tr>
                     </thead>
                     <tbody>
-                    {{#courses}}
-                    <tr>
-                        <td>
-                        <a href="/regdetails?classid={{classid}}">{{classid}}</a> 
-                        </td>
-                        <td>{{dept}}</td>
-                        <td>{{coursenum}}</td>
-                        <td>{{area}}</td>
-                        <td>{{title}}</td>
-                    </tr>
-                    {{/courses}}
+                        {{#courses}}
+                            <tr>
+                                <td><a href="/regdetails?classid={{classid}}">{{classid}}</a></td>
+                                <td>{{dept}}</td>
+                                <td>{{coursenum}}</td>
+                                <td>{{area}}</td>
+                                <td>{{title}}</td>
+                            </tr>
+                        {{/courses}}
                     </tbody>
                 </table>`;
 
