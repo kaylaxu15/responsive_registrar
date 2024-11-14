@@ -55,7 +55,6 @@ def regoverviews():
 @app.route('/regdetails', methods=['GET'])
 def reg_details():
     classid = flask.request.args.get('classid')
-    print("CLASSID HERE", classid)
 
     if classid == "":
         return render_template(
@@ -70,6 +69,7 @@ def reg_details():
             error="non-integer classid")
 
     class_details = database.get_class_details(classid)
+    #print("CLASSID HERE", class_details)
     json_doc = json.dumps(class_details)
     response = flask.make_response(json_doc)  
     response.headers['Content-Type'] = 'application/json'
