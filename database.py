@@ -97,6 +97,14 @@ def class_details(cursor, classid):
     'SELECT * FROM classes, courses, crosslistings '
     'WHERE classes.classid = ? ' 
     + merge_condition)
+    
+    if classid == '':
+        return [False, "missing classid"]
+    
+    try:
+        classid = int(classid)
+    except:
+        return [False, "non-integer classid"]
 
     error_msg = check_class_id(cursor, classid)
     if len(error_msg) != 0:

@@ -1,6 +1,7 @@
 <!DOCTYPE html> 
 <html>
     <head>
+        <style>.header {background-color:#295078; color:white;} .footer {background-color:#295078; color:white;}</style>
         <title>Registrar's Office Class Search</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         
@@ -31,39 +32,30 @@
                 </div>
             </div>
         </div>
-        
-        <h1>Registrar's Office</h1>
-        <h2>Class Search</h2>
-        <hr>
-        <form action="/regoverviews" method="get">
-            <table>
-                <tbody>
-                    <tr>
-                        <td align="right">Dept:</td>
-                        <td><input type="text" id="deptInput" autofocus></td>
-                    </tr>
-                    <tr>
-                        <td align="right">Number:</td>
-                        <td><input type="text" id="coursenumInput" autofocus></td>
-                    </tr>
-                    <tr>
-                        <td align="right">Area:</td>
-                        <td><input type="text" id="areaInput" autofocus></td>
-                    </tr>
-                    <tr>
-                        <td align="right">Title:</td>
-                        <td><input type="text" id="titleInput" autofocus></td>
-                    </tr>
-                </tbody>
-            </table>
-        </form>
-        <hr>
-        <div id="resultsDiv"></div>
-    
-          <br>
-          <hr>
-          <a>Created by Kayla Xu and Niranjan Vijaya Krishnan</a>
-          <hr>
+        <div class="container-fluid sticky-top header">
+                <h1 align="center">Registrar's Office: Class Search</h1>
+                <div class="row">
+                    <div class="col">
+                        <input type="text" id="deptInput" placeholder="Department" class="form-control" autofocus>
+                    </div>
+                    <div class="col">
+                        <input type="text" id="coursenumInput" placeholder="Number" class="form-control" autofocus>
+                    </div>
+                    <div class="col">
+                        <input type="text" id="areaInput" placeholder="Area" class="form-control" autofocus>
+                    </div>
+                    <div class="col">
+                        <input type="text" id="titleInput" placeholder="Title" class="form-control" autofocus>
+                    </div>
+                </div>
+                <br>
+        </div>
+        <div class="container-fluid" id="resultsDiv"></div>
+        <div class="container-fluid sticky-bottom footer">
+            <center>
+                <a>Created by Kayla Xu and Niranjan Vijaya Krishnan</a>
+            </center>
+        </div>
         <script src=
           "https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js">
         </script> 
@@ -82,7 +74,7 @@
                 </head>
                 <body>
                     <h2>Class Details</h2>
-                    <table id="classDetailsTable" border="1">
+                    <table id="classDetailsTable" class="table table-striped">
                         <tbody>
                         <tr>
                             <td>
@@ -124,7 +116,7 @@
                     </table>
 
                     <h2>Course Details</h2>
-                    <table id="courseDetailsTable" border="1">
+                    <table id="courseDetailsTable" class="table table-striped">
                         <tbody>
                         <tr>
                             <td>
@@ -184,12 +176,12 @@
 
             function convertToHtml(courses) {
                 let template = `
-                <table>
+                <table class="table table-striped" id="overviewsTable">
                     <thead>
                         <tr>
-                            <th>Class ID</th>
+                            <th>ClassId</th>
                             <th>Dept</th>
-                            <th>Course Number</th>
+                            <th>Num</th>
                             <th>Area</th>
                             <th>Title</th>
                         </tr>
