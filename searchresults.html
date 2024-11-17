@@ -280,6 +280,8 @@
             }
 
             function setup() {
+                getResults();
+
                 $('#deptInput').on('input', debouncedGetResults);
                 $('#coursenumInput').on('input', debouncedGetResults);
                 $('#areaInput').on('input', debouncedGetResults);

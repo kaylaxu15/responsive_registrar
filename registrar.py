@@ -11,7 +11,7 @@ def index():
     query = query = {'coursenum':'', 'dept':'',
              'area':'','title':''}  
     courses = database.get_class_overviews(query)
-    json_doc = json.dumps(courses)
+    #json_doc = json.dumps(courses)
     return flask.send_file('searchresults.html')
 
 @app.route('/?', methods=['GET'])
