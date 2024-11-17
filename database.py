@@ -152,7 +152,7 @@ def get_class_overviews(query):
 
     except Exception as ex:
         print(f'{sys.argv[0]}: {ex}', file=sys.stderr)
-        return None
+        return [False, "A server error occured. Please contact the system administrator."]
 
 
 def get_class_details(class_id):
@@ -170,4 +170,4 @@ def get_class_details(class_id):
 
     except Exception as ex:
         print(f'{sys.argv[0]}: {ex}', file=sys.stderr)
-        return None
+        return [False, "A server error occured. Please contact the system administrator."]
