@@ -2276,6 +2276,20 @@ ClassId Dept Num Area Title
 8074 CEE 507 Independent Study I
 8075 CEE 508 Independent Study II
 -----------------
+title: |Independent Study |
+ClassId Dept Num Area Title
+8074 CEE 507 Independent Study I
+8075 CEE 508 Independent Study II
+-----------------
+title: |Independent Study  |
+ClassId Dept Num Area Title
+-----------------
+title: | Independent Study|
+ClassId Dept Num Area Title
+-----------------
+title: |  Independent Study|
+ClassId Dept Num Area Title
+-----------------
 dept: |SOC|
 coursenum: |577|
 ClassId Dept Num Area Title

@@ -181,10 +181,10 @@ def main():
 
     # Tests for Corner Cases
     run_test(delay, driver, {'title':'Independent Study'})
-    # run_test(delay, driver, {'title':'Independent Study '})
-    # run_test(delay, driver, {'title':'Independent Study  '})
-    # run_test(delay, driver, {'title':' Independent Study'})
-    # run_test(delay, driver, {'title':'  Independent Study'})
+    run_test(delay, driver, {'title':'Independent Study '})
+    run_test(delay, driver, {'title':'Independent Study  '})
+    run_test(delay, driver, {'title':' Independent Study'})
+    run_test(delay, driver, {'title':'  Independent Study'})
     
     # Test for Cross Referenced Departments Course
     run_test(delay, driver, {'dept':'SOC', 'coursenum':'577'})
