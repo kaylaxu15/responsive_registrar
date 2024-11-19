@@ -1,9 +1,8 @@
-import flask
-from flask import Flask, render_template
-import database
 import json
+import flask
+import database
 
-app = Flask(__name__, template_folder='.')
+app = flask.Flask(__name__, template_folder='.')
 
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
@@ -31,25 +30,10 @@ def regoverviews():
     courses = database.get_class_overviews(query)
 
     json_doc = json.dumps(courses)
-    response = flask.make_response(json_doc)  
+    response = flask.make_response(json_doc)
     response.headers['Content-Type'] = 'application/json'
 
     return response
-
-    '''
-    # get the last search's data
-    prev_query = get_prior_request()
-    if courses is None:
-        return render_template(
-            'errordetails.html',
-            error='A server error occurred. Please contact the system administrator.')
-    if courses[0] is False:
-        return render_template('errordetails.html', error=courses[1])
-    return render_template(
-        'searchresults.html',
-        courses=courses,
-        prev_query=prev_query)
-        '''
 
 # display the class details when you click on class ID
 @app.route('/regdetails', methods=['GET'])
@@ -71,60 +55,7 @@ def reg_details():
     class_details = database.get_class_details(classid)
     #print("CLASSID HERE", class_details)
     json_doc = json.dumps(class_details)
-    response = flask.make_response(json_doc)  
+    response = flask.make_response(json_doc)
     response.headers['Content-Type'] = 'application/json'
 
     return response
-    '''
-    try:
-        if class_details is None:
-            return render_template(
-                'errordetails.html',
-                error='A server error occurred.
-                 Please contact the system administrator.')
-        if class_details[0] is False:
-            return render_template(
-                'errordetails.html',
-                error=class_details[1])
-        return render_template(
-            'classdetails.html',
-            classid=classid,
-            class_details=class_details)
-    except KeyError:
-        return render_template(
-            'classdetails.html',
-            classid=classid,
-            class_details=class_details)
-    '''
-
-'''
-
-@app.route('/classoverviews', methods=['GET'])
-def class_overviews():
-    dept = flask.request.args.get('dept')
-    if dept is None:
-        dept = ''
-    num = flask.request.args.get('coursenum')
-    if num is None:
-        num = ''
-    area = flask.request.args.get('area')
-    if area is None:
-        area = ''
-    title = flask.request.args.get('title')
-    if title is None:
-        title = ''
-    query = {'coursenum':num, 'dept':dept,
-             'area':area,'title':title}                         
-    courses = database.get_class_overviews(query)
-
-    html_code = render_template(
-        'searchresults.html',
-        courses=courses,
-        prev_query=query)
-    response = flask.make_response(html_code)
-    response.set_cookie('prev_dept', dept)
-    response.set_cookie('prev_num', num)
-    response.set_cookie('prev_area', area)
-    response.set_cookie('prev_title', title)
-    return response
-'''

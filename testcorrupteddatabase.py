@@ -12,7 +12,7 @@ def corrupt_database():
 
 def restore_database():
     shutil.copy('regbackup.sqlite', 'reg.sqlite')
-    
+
 def drop_classes():
     try:
         with sqlite3.connect(

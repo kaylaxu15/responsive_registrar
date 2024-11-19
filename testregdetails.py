@@ -127,14 +127,14 @@ def main():
     server_url, browser, mode, delay = get_args()
 
     driver = create_driver(browser, mode)
-    
+
     # Statement Tests
     run_test(server_url, delay, driver, ['COS', '333', '8321'])
     run_test(server_url, delay, driver, ['CHM', '233', '9032'])
     run_test(server_url, delay, driver, ['COS', '126', '8293'])
     run_test(server_url, delay, driver, ['SPA', '321', '9977'])
     run_test(server_url, delay, driver, ['HLS', '102', '9012'])
-    
+
     # Test for Cross Referenced Departments Course
     run_test(server_url, delay, driver, ['ECO', '370', '8476'])
     run_test(server_url, delay, driver, ['HIS', '378', '8476'])

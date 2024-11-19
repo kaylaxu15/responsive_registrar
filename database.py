@@ -3,6 +3,10 @@ import sqlite3
 import contextlib
 
 DATABASE_URL = 'file:reg.sqlite?mode=ro'
+ERROR_MSG = (
+    "A server error occured. "
+    "Please contact the system administrator."
+    )
 
 # handle escape chars
 def handle_special_characters(query):
@@ -97,13 +101,13 @@ def class_details(cursor, classid):
     'SELECT * FROM classes, courses, crosslistings '
     'WHERE classes.classid = ? ' 
     + merge_condition)
-    
+
     if classid == '':
         return [False, "missing classid"]
-    
+
     try:
         classid = int(classid)
-    except:
+    except Exception:
         return [False, "non-integer classid"]
 
     error_msg = check_class_id(cursor, classid)
@@ -152,7 +156,7 @@ def get_class_overviews(query):
 
     except Exception as ex:
         print(f'{sys.argv[0]}: {ex}', file=sys.stderr)
-        return [False, "A server error occured. Please contact the system administrator."]
+        return [False, ERROR_MSG]
 
 
 def get_class_details(class_id):
@@ -170,4 +174,4 @@ def get_class_details(class_id):
 
     except Exception as ex:
         print(f'{sys.argv[0]}: {ex}', file=sys.stderr)
-        return [False, "A server error occured. Please contact the system administrator."]
+        return [False, ERROR_MSG]
