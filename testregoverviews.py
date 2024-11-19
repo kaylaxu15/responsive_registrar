@@ -1,24 +1,14 @@
 #-----------------------------------------------------------------------
-# testreg.py
+# testregoverviews.py
 # Author: Bob Dondero
 #-----------------------------------------------------------------------
 
 import sys
+import time
 import argparse
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.chrome.options import Options as ChromeOptions
-# import shutil
-# import os
-# import sqlite3
-# import contextlib
-
-#-----------------------------------------------------------------------
-
-MAX_LINE_LENGTH = 72
-UNDERLINE = '-' * MAX_LINE_LENGTH
+from selenium.webdriver.common.keys import Keys
 
 #-----------------------------------------------------------------------
 
@@ -39,35 +29,43 @@ def get_args():
 
     parser.add_argument(
         'mode', metavar='mode', type=str,
-        choices=['normal', 'headless'],
+        choices=['normal','headless'],
         help='the mode (normal or headless) that this program should '
             + 'use when interacting with Firefox; headless tells '
-            + 'the browser not to display its window and so is faster')
+            + 'the browser not to display its window and so is faster, '
+            + 'especially when using X Windows')
+
+    parser.add_argument(
+        'delay', metavar='delay', type=int,
+        help='the number of seconds that this program should delay '
+            + 'between interactions with the browser')
 
     args = parser.parse_args()
 
-    return (args.serverURL, args.browser, args.mode)
+    return (args.serverURL, args.browser, args.mode, args.delay)
 
 #-----------------------------------------------------------------------
 
 def create_driver(browser, mode):
 
     if browser == 'firefox':
+        from selenium.webdriver.firefox.options import Options
         try:
-            options = FirefoxOptions()
+            options = Options()
             if mode == 'headless':
-                options.add_argument('-headless')
+               options.add_argument('-headless')
             driver = webdriver.Firefox(options=options)
-        except Exception:  # required if using snap firefox
-            options = FirefoxOptions()
+        except Exception as ex:  # required if using snap firefox
+            from selenium.webdriver.firefox.service import Service
+            options = Options()
             if mode == 'headless':
                 options.add_argument('-headless')
-            service = FirefoxService(
-                executable_path='/snap/bin/geckodriver')
+            service = Service(executable_path='/snap/bin/geckodriver')
             driver = webdriver.Firefox(options=options, service=service)
 
     else:  # browser == 'chrome'
-        options = ChromeOptions()
+        from selenium.webdriver.chrome.options import Options
+        options = Options()
         if mode == 'headless':
             options.add_argument('-headless')
         options.add_argument('--remote-debugging-pipe')
@@ -83,9 +81,9 @@ def print_flush(message):
 
 #-----------------------------------------------------------------------
 
-def run_test(driver, input_values):
+def run_test(delay, driver, input_values):
 
-    print_flush(UNDERLINE)
+    print_flush('-----------------')
     for key, value in input_values.items():
         print_flush(key + ': |' + value + '|')
 
@@ -93,119 +91,78 @@ def run_test(driver, input_values):
         if 'dept' in input_values:
             dept_input = driver.find_element(By.ID, 'deptInput')
             dept_input.send_keys(input_values['dept'])
+            time.sleep(delay) # Necessary for virtual DOM libraries.
+
         if 'coursenum' in input_values:
             coursenum_input = driver.find_element(By.ID,
                 'coursenumInput')
             coursenum_input.send_keys(input_values['coursenum'])
+            time.sleep(delay) # Necessary for virtual DOM libraries
+
         if 'area' in input_values:
             area_input = driver.find_element(By.ID, 'areaInput')
             area_input.send_keys(input_values['area'])
+            time.sleep(delay) # Necessary for virtual DOM libraries
+
         if 'title' in input_values:
             title_input = driver.find_element(By.ID, 'titleInput')
             title_input.send_keys(input_values['title'])
+            time.sleep(delay) # Necessary for virtual DOM libraries
 
-        submit_button = driver.find_element(By.ID, 'submitButton')
-        submit_button.click()
+        # Wait for the AJAX calls to complete.
+        time.sleep(delay)
 
         overviews_table = driver.find_element(By.ID, 'overviewsTable')
         print_flush(overviews_table.text)
 
+        # This works, but only with libraries that don't use
+        # a virtual DOM:
+        #if 'dept' in input_values:
+        #    dept_input.clear()
+        #if 'coursenum' in input_values:
+        #    coursenum_input.clear()
+        #if 'area' in input_values:
+        #    area_input.clear()
+        #if 'title' in input_values:
+        #    title_input.clear()
+
+        # This works with all (tested) libraries:
         if 'dept' in input_values:
-            dept_input = driver.find_element(By.ID, 'deptInput')
-            dept_input.clear()
+            key_count = len(input_values['dept'])
+            dept_input.send_keys(Keys.BACKSPACE * key_count)
+            time.sleep(delay)
         if 'coursenum' in input_values:
-            coursenum_input = driver.find_element(By.ID,
-                'coursenumInput')
-            coursenum_input.clear()
+            key_count = len(input_values['coursenum'])
+            coursenum_input.send_keys(Keys.BACKSPACE * key_count)
+            time.sleep(delay)
         if 'area' in input_values:
-            area_input = driver.find_element(By.ID, 'areaInput')
-            area_input.clear()
+            key_count = len(input_values['area'])
+            area_input.send_keys(Keys.BACKSPACE * key_count)
+            time.sleep(delay)
         if 'title' in input_values:
-            title_input = driver.find_element(By.ID, 'titleInput')
-            title_input.clear()
+            key_count = len(input_values['title'])
+            title_input.send_keys(Keys.BACKSPACE * key_count)
+            time.sleep(delay)
+
     except Exception as ex:
         print(str(ex), file=sys.stderr)
 
 #-----------------------------------------------------------------------
 
 def main():
-    server_url, browser, mode = get_args()
+
+    server_url, browser, mode, delay = get_args()
 
     driver = create_driver(browser, mode)
 
     driver.get(server_url)
 
-    # Statement Testing
-    run_test(driver,{})
-    run_test(driver, {'dept':'COS'})
-    run_test(driver, {'coursenum':'333'})
-    run_test(driver, {'coursenum':'b'})
-    run_test(driver, {'area':'qr'})
-    run_test(driver, {'title':'intro'})
-    run_test(driver, {'dept':'science'})
-    run_test(driver, {'dept':'COS', 'coursenum':'3'})
-    run_test(driver,{'dept':'COS', 'coursenum':'2',
-                     'area':'qr', 'title':'intro'})
+    run_test(delay, driver,
+        {'dept':'COS'})
+    run_test(delay, driver,
+        {'dept':'COS', 'coursenum':'2', 'area':'qr', 'title':'intro'})
 
-    # Tests for Special Characters
-    run_test(driver, {'title':'C_S'})
-    run_test(driver, {'title':'c%S'})
-
-    # Tests for Corner Cases
-    run_test(driver, {'title':'Independent Study'})
-    run_test(driver, {'title':'Independent Study '})
-    run_test(driver, {'title':'Independent Study  '})
-    run_test(driver, {'title':' Independent Study'})
-    run_test(driver, {'title':'  Independent Study'})
-
-    # Test for Cross Referenced Departments Course
-    run_test(driver, {'dept':'SOC', 'coursenum':'577'})
-
-    # Test for Long Title
-    long_title = '''Topics in International Relations:
-    US Diplomacy & the Other Middle East'''
-    run_test(driver, {'title':long_title})
-
-    # Test for Long Description
-    run_test(driver, {'dept':'WWS', 'coursenum':'598'})
-
-    # Test for Course with Multiple Professors
-    run_test(driver, {'title':'Elementary Pesian II'})
-
-    # Test for Class with No Professors
-    run_test(driver, {'dept':'WWS', 'coursenum':'402'})
-
-    # # Test for database errors (commented out)
-    # shutil.copy('reg.sqlite', 'regbackup.sqlite')
-    # os.remove('reg.sqlite')
-
-    # # Database Missing (cannot be opened)
-    # run_test(driver, {})
-    # run_test(driver, {'dept':'COS'})
-    # run_test(driver, {'title':'Independent Study'})
-
-    # # Restore Database
-    # shutil.copy('regbackup.sqlite', 'reg.sqlite')
-
-    # try:
-    #     with sqlite3.connect(DATABASE_URL,
-    #             isolation_level=None,
-    #             uri=True) as connection:
-    #         # drop a table in reg.sqlite
-    #         with contextlib.closing(connection.cursor()) as cursor:
-    #             cursor.execute('DROP TABLE crosslistings')
-    # except Exception as ex:
-    #     print(f'{sys.argv[0]}: {ex}',
-    #           file = sys.stderr)
-    #     sys.exit(1)
-
-    # # Tests with Database Issues
-    # run_test(driver, {})
-    # run_test(driver, {'dept':'COS'})
-    # run_test(driver, {'title':'Independent Study'})
-
-    # # Restore Database
-    # shutil.copy('regbackup.sqlite', 'reg.sqlite')
+    # Add more tests here.
 
     driver.quit()
 

@@ -4,21 +4,11 @@
 #-----------------------------------------------------------------------
 
 import sys
+import time
 import argparse
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.options import Options as FirefoxOptions
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.chrome.options import Options as ChromeOptions
-# import shutil
-# import os
-# import sqlite3
-# import contextlib
-
-#-----------------------------------------------------------------------
-
-MAX_LINE_LENGTH = 72
-UNDERLINE = '-' * MAX_LINE_LENGTH
+from selenium.webdriver.firefox.options import Options
 
 #-----------------------------------------------------------------------
 
@@ -41,34 +31,41 @@ def get_args():
         'mode', metavar='mode', type=str,
         choices=['normal','headless'],
         help='the mode (normal or headless) that this program should '
-            + 'use when interacting with the browser; headless tells '
-            + 'the browser not to display its window and so is faster, '
+            + 'use when interacting with Firefox; headless tells '
+            + 'Firefox not to display its window and so is faster, '
             + 'especially when using X Windows')
+
+    parser.add_argument(
+        'delay', metavar='delay', type=int,
+        help='the number of seconds that this program should delay '
+            + 'between interactions with Firefox')
 
     args = parser.parse_args()
 
-    return (args.serverURL, args.browser, args.mode)
+    return (args.serverURL, args.browser, args.mode, args.delay)
 
 #-----------------------------------------------------------------------
 
 def create_driver(browser, mode):
 
     if browser == 'firefox':
+        from selenium.webdriver.firefox.options import Options
         try:
-            options = FirefoxOptions()
+            options = Options()
             if mode == 'headless':
-                options.add_argument('-headless')
+               options.add_argument('-headless')
             driver = webdriver.Firefox(options=options)
-        except Exception:  # required if using snap firefox
-            options = FirefoxOptions()
+        except Exception as ex:  # required if using snap firefox
+            from selenium.webdriver.firefox.service import Service
+            options = Options()
             if mode == 'headless':
                 options.add_argument('-headless')
-            service = FirefoxService(
-                executable_path='/snap/bin/geckodriver')
+            service = Service(executable_path='/snap/bin/geckodriver')
             driver = webdriver.Firefox(options=options, service=service)
 
     else:  # browser == 'chrome'
-        options = ChromeOptions()
+        from selenium.webdriver.chrome.options import Options
+        options = Options()
         if mode == 'headless':
             options.add_argument('-headless')
         options.add_argument('--remote-debugging-pipe')
@@ -84,91 +81,58 @@ def print_flush(message):
 
 #-----------------------------------------------------------------------
 
-def run_test(server_url, driver, classid):
+def run_test(server_url, delay, driver, classinfo):
 
-    print_flush(UNDERLINE)
+    print_flush('-----------------')
+    print_flush('classid: ' + classinfo[2])
+
     try:
         driver.get(server_url)
-        link_element = driver.find_element(By.LINK_TEXT, classid)
-        link_element.click()
-        class_details_table = driver.find_element(
-            By.ID, 'classDetailsTable')
+
+        # Make sure that the desired classid is visible.
+        dept_input = driver.find_element(By.ID, 'deptInput')
+        dept_input.send_keys(classinfo[0])
+
+        # For libraries (e.g. React) that use a virtual DOM, wait
+        # for the library to update the browser DOM.
+        time.sleep(delay)
+
+        coursenum_input = driver.find_element(By.ID, 'coursenumInput')
+        coursenum_input.send_keys(classinfo[1])
+
+        # Wait for the AJAX call to complete.
+        time.sleep(delay)
+
+        button_element = driver.find_element(
+            By.ID, 'button' + str(classinfo[2]))
+        button_element.click()
+
+        # Wait for the AJAX call to complete.
+        time.sleep(delay)
+
+        class_details_table = driver.find_element(By.ID,
+            'classDetailsTable')
         print_flush(class_details_table.text)
-        course_details_table = driver.find_element(
-            By.ID, 'courseDetailsTable')
+        course_details_table = driver.find_element(By.ID,
+            'courseDetailsTable')
         print_flush(course_details_table.text)
+
     except Exception as ex:
-        print(str(ex))
+        print(str(ex), file=sys.stderr)
 
 #-----------------------------------------------------------------------
 
 def main():
-    server_url, browser, mode = get_args()
+
+    server_url, browser, mode, delay = get_args()
 
     driver = create_driver(browser, mode)
 
-    # Statement Tests
-    run_test(server_url, driver, '8321')
-    run_test(server_url, driver, '9032')
-    run_test(server_url, driver, '8293')
-    run_test(server_url, driver, '9977')
-    run_test(server_url, driver, '9012')
+    run_test(server_url, delay, driver, ['COS', '333', '8321'])
+    
+    
 
-    # Erroneous Arguments
-    # run_test(server_url, driver, '')
-    # run_test(server_url, driver, '8321 9032')
-    # run_test(server_url, driver, 'abc123')
-    # run_test(server_url, driver, '9034') # Course not found
-
-    # Test for Cross Referenced Departments Course
-    run_test(server_url, driver, '8476')
-
-    # Test for Long Title
-    run_test(server_url, driver, '10231')
-
-    # Test for Long Description
-    run_test(server_url, driver, '9283')
-    run_test(server_url, driver, '9300')
-
-    # Test for Course with Multiple Professors
-    run_test(server_url, driver, '9307')
-
-    # Test for Course with No Professors
-    run_test(server_url, driver, '7886')
-
-    # # Test for database errors
-    # shutil.copy('reg.sqlite', 'regbackup.sqlite')
-    # os.remove('reg.sqlite')
-
-    # # Database Missing (cannot be opened)
-    # run_test(server_url, driver, '')
-    # run_test(server_url, driver, '9977')
-    # run_test(server_url, driver, '4231')
-    # run_test(server_url, driver, '9034')
-
-    # # Restore Database
-    # shutil.copy('regbackup.sqlite', 'reg.sqlite')
-
-    # try:
-    #     with sqlite3.connect(
-    #             DATABASE_URL,
-    #             isolation_level=None,
-    #             uri=True) as connection:
-    #         # drop a table in reg.sqlite
-    #         with contextlib.closing(connection.cursor()) as cursor:
-    #             cursor.execute('DROP TABLE crosslistings')
-    # except Exception as ex:
-    #     print(f'{sys.argv[0]}: {ex}',
-    #           file = sys.stderr)
-    #     sys.exit(1)
-
-    # # Tests with Database Issues
-    # run_test(server_url, driver, '')
-    # run_test(server_url, driver, '4590')
-    # run_test(server_url, driver, '9012')
-
-    # # Restore Database
-    # shutil.copy('regbackup.sqlite', 'reg.sqlite')
+    # Add more tests here.
 
     driver.quit()
 
