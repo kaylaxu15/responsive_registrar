@@ -127,12 +127,30 @@ def main():
     server_url, browser, mode, delay = get_args()
 
     driver = create_driver(browser, mode)
-
+    
+    # Statement Tests
     run_test(server_url, delay, driver, ['COS', '333', '8321'])
+    run_test(server_url, delay, driver, ['CHM', '233', '9032'])
+    run_test(server_url, delay, driver, ['COS', '126', '8293'])
+    run_test(server_url, delay, driver, ['SPA', '321', '9977'])
+    run_test(server_url, delay, driver, ['HLS', '102', '9012'])
     
-    
+    # Test for Cross Referenced Departments Course
+    run_test(server_url, delay, driver, ['ECO', '370', '8476'])
+    run_test(server_url, delay, driver, ['HIS', '378', '8476'])
 
-    # Add more tests here.
+    # Test for Long Title
+    run_test(server_url, delay, driver, ['NES', '559', '10231'])
+
+    # Test for Long Description
+    run_test(server_url, delay, driver, ['EEB', '214', '9283'])
+    run_test(server_url, delay, driver, ['MOL', '430', '9300'])
+
+    # Test for Course with Multiple Professors
+    run_test(server_url, delay, driver, ['MOL', '525', '9307'])
+
+    # Test for Course with No Professors
+    run_test(server_url, delay, driver, ['ANT', '390', '7886'])
 
     driver.quit()
 

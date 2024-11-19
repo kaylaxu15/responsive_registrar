@@ -8,10 +8,6 @@ app = Flask(__name__, template_folder='.')
 @app.route('/', methods=['GET'])
 @app.route('/index', methods=['GET'])
 def index():
-    query = query = {'coursenum':'', 'dept':'',
-             'area':'','title':''}  
-    courses = database.get_class_overviews(query)
-    #json_doc = json.dumps(courses)
     return flask.send_file('searchresults.html')
 
 @app.route('/?', methods=['GET'])
@@ -31,7 +27,7 @@ def regoverviews():
         title = ''
 
     query = {'coursenum':num, 'dept':dept,
-             'area':area,'title':title}                         
+             'area':area,'title':title}                       
     courses = database.get_class_overviews(query)
 
     json_doc = json.dumps(courses)

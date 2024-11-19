@@ -157,12 +157,51 @@ def main():
 
     driver.get(server_url)
 
+    # Given Tests
     run_test(delay, driver,
         {'dept':'COS'})
     run_test(delay, driver,
         {'dept':'COS', 'coursenum':'2', 'area':'qr', 'title':'intro'})
+    
+    # Statement Testing
+    run_test(delay, driver,{})
+    run_test(delay, driver, {'dept':'COS'})
+    run_test(delay, driver, {'coursenum':'333'})
+    run_test(delay, driver, {'coursenum':'b'})
+    run_test(delay, driver, {'area':'qr'})
+    run_test(delay, driver, {'title':'intro'})
+    run_test(delay, driver, {'dept':'science'})
+    run_test(delay, driver, {'dept':'COS', 'coursenum':'3'})
+    run_test(delay, driver,{'dept':'COS', 'coursenum':'2',
+                     'area':'qr', 'title':'intro'})
 
-    # Add more tests here.
+    # Tests for Special Characters
+    run_test(delay, driver, {'title':'C_S'})
+    run_test(delay, driver, {'title':'c%S'})
+
+    # Tests for Corner Cases
+    run_test(delay, driver, {'title':'Independent Study'})
+    # run_test(delay, driver, {'title':'Independent Study '})
+    # run_test(delay, driver, {'title':'Independent Study  '})
+    # run_test(delay, driver, {'title':' Independent Study'})
+    # run_test(delay, driver, {'title':'  Independent Study'})
+    
+    # Test for Cross Referenced Departments Course
+    run_test(delay, driver, {'dept':'SOC', 'coursenum':'577'})
+    
+    # Test for Long Title
+    long_title = '''Topics in International Relations:
+    US Diplomacy & the Other Middle East'''
+    run_test(delay, driver, {'title':long_title})
+    
+    # Test for Long Description
+    run_test(delay, driver, {'dept':'WWS', 'coursenum':'598'})
+    
+    # Test for Course with Multiple Professors
+    run_test(delay, driver, {'title':'Elementary Persian II'})
+    
+    # Test for Class with No Professors
+    run_test(delay, driver, {'dept':'WWS', 'coursenum':'402'})
 
     driver.quit()
 

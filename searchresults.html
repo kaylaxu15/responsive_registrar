@@ -258,7 +258,7 @@
                 let title = $('#titleInput').val() || '';
 
                 let url = '/regoverviews?dept=' + dept + '&coursenum='
-                + coursenum + '&area=' + area + '&title=' + title
+                + coursenum + '&area=' + area + '&title=' + encodeURIComponent(title)
 
                 if (class_request !== null)
                     class_request.abort();
