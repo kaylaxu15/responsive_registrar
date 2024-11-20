@@ -104,6 +104,8 @@ def class_details(cursor, classid):
 
     if classid == '':
         return [False, "missing classid"]
+    elif classid == None:
+        return [False, "missing classid"]
 
     try:
         classid = int(classid)
