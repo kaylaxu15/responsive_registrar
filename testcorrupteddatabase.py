@@ -28,8 +28,9 @@ def drop_classes():
         print(f'{sys.argv[0]}: {ex}',
               file = sys.stderr)
         sys.exit(1)
-        
+
 def drop_class(class_num):
+    string = 'DELETE FROM classes WHERE classes.classid = '
     try:
         with sqlite3.connect(
                 DATABASE_URL,
@@ -38,7 +39,7 @@ def drop_class(class_num):
 
             # drop a table in reg.sqlite
             with contextlib.closing(connection.cursor()) as cursor:
-                cursor.execute('DELETE FROM classes WHERE classes.classid = ' + str(class_num))
+                cursor.execute(string + str(class_num))
 
     except Exception as ex:
         print(f'{sys.argv[0]}: {ex}',

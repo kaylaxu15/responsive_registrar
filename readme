@@ -12,6 +12,13 @@ for the actual course information. I also worked on the modal for classdetails a
 the AJAX querying logic to get the classdetails information. I used Mustache templates for both
 the class overviews page and the class details modal pop-up. 
 
+Niranjan: I worked on the searchresults.html and transitioning it towards the reference page
+with sticky tops and sticky bottoms and nice looking input fields. I additionally handled
+how the program should behave with user errors and determining the correct output. I worked
+on testing of the program and handling all corner cases not previously determined.
+I additionally created an addditional python file testcorrupteddatabase.py to assist in
+testing corner cases.
+
 
 
 A description of whatever help (if any) you received from other people while doing the assignment, as prescribed by the course Policies web page.
@@ -25,9 +32,9 @@ some things (like looping through an array).
 
 An indication of how much time you spent doing the assignment.
 
-15 hours 
+22 hours 
 
 Your assessment of the assignment: Did it help you to learn? What did it help you to learn? Do you have any suggestions for improvement? Etc.
 (Optionally) Any information that will help us to grade your work in the most favorable light. In particular you must describe all known bugs.
 
-It was very helpful in learning jQuery and AJAX. 
+It was very helpful in learning jQuery and AJAX. It also was helpful it creating a final product, developing my consideration in handling corner cases and user error.
